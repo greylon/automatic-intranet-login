@@ -1,0 +1,1268 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Capturing Windows 7 Credentials at Logon Using Custom Credential Provider | Tyler Wrightson&#039;s Security Blog</title>
+<link rel="profile" href="http://gmpg.org/xfn/11" />
+<link rel="pingback" href="http://twrightson.wordpress.com/xmlrpc.php" />
+<link rel="alternate" type="application/rss+xml" title="Tyler Wrightson&#039;s Security Blog &raquo; Feed" href="http://twrightson.wordpress.com/feed/" />
+<link rel="alternate" type="application/rss+xml" title="Tyler Wrightson&#039;s Security Blog &raquo; Comments Feed" href="http://twrightson.wordpress.com/comments/feed/" />
+<link rel="alternate" type="application/rss+xml" title="Tyler Wrightson&#039;s Security Blog &raquo; Capturing Windows 7 Credentials at Logon Using Custom Credential&nbsp;Provider Comments Feed" href="http://twrightson.wordpress.com/2012/01/02/capturing-windows-7-credentials-at-logon-using-custom-credential-provider/feed/" />
+<script type="text/javascript">
+/* <![CDATA[ */
+function addLoadEvent(func){var oldonload=window.onload;if(typeof window.onload!='function'){window.onload=func;}else{window.onload=function(){oldonload();func();}}}
+/* ]]> */
+</script>
+<link rel='stylesheet' id='all-css-0' href='../../../../../s0.wp.com/_static/index.html%3F%3F-eJx9jdEKgzAMRX9oXZAyhg9j36I1dtHYFJNS%252FPvJXhSEPYaccw%252FU7IIkw2SwFJe5REoKTDMqTGi5C7P7XfegeoMT3rPEQ5AYcZBibhRmqVBpiGgX6dSgNFIi28A+uOy1XHqQlfbfPyuL7g3uaAW1jfHCXtYO7r28Gv%252F0rX80bTt9Afe6Xbc=.css' type='text/css' media='all' />
+<link rel='stylesheet' id='origin-font-bitter-css'  href='../../../../../fonts.googleapis.com/css%3Ffamily=Bitter&amp;ver=20120821.css' type='text/css' media='all' />
+<link rel='stylesheet' id='all-css-2' href='../../../../../s1.wp.com/wp-content/themes/h4/global.css%3Fm=1351293556g.css' type='text/css' media='all' />
+<script type='text/javascript'>
+/* <![CDATA[ */
+var LoggedOutFollow = {"invalid_email":"Your subscription did not succeed, please try again with a valid email address."};
+/* ]]> */
+</script>
+<script type='text/javascript' src='../../../../../s1.wp.com/_static/index.html%3F%3F-eJyFkNEKwjAMRX%252FIWnTi8EH8lq3LSmrb1Ka1zK+3gwmKgz0lJIccbmQJQpFP4JM0LB31aEFkhtjpOhPoR9ob3snKoVc2D8AzaB4Z4rSUTUA41LFLsHfoP%252FCXNRAnB8xVubL9VaF%252FIpRNzEAKnbqLCIyvv6u9JS2CzRo9y9prGCgnMZK1VGTBQUNaC6XIufkrEYKdljA3dz007bk5HdtLY96oiX2E'></script>
+<link rel='stylesheet' id='all-css-0' href='../../../../../s0.wp.com/wp-content/mu-plugins/highlander-comments/style.css%3Fm=1369818522g.css' type='text/css' media='all' />
+<!--[if lt IE 8]>
+<link rel='stylesheet' id='highlander-comments-ie7-css'  href='http://s2.wp.com/wp-content/mu-plugins/highlander-comments/style-ie7.css?m=1351637563g&#038;ver=20110606' type='text/css' media='all' />
+<![endif]-->
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://twrightson.wordpress.com/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://twrightson.wordpress.com/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='Covert System Manipulation Tool &#8211;&nbsp;SimSim' href='http://twrightson.wordpress.com/2011/12/18/covert-system-manipulation-tool-simsim/' />
+<link rel='next' title='Insider Rogue Certification Authority&nbsp;Attack' href='http://twrightson.wordpress.com/2012/01/18/insider-rogue-certification-authority-attack/' />
+<meta name="generator" content="WordPress.com" />
+<link rel='canonical' href='index.html' />
+<link rel='shortlink' href='http://wp.me/pjQlU-3m' />
+<link rel="alternate" type="application/json+oembed" href="http://public-api.wordpress.com/oembed/1.0/?format=json&amp;url=http%3A%2F%2Ftwrightson.wordpress.com%2F2012%2F01%2F02%2Fcapturing-windows-7-credentials-at-logon-using-custom-credential-provider%2F&amp;for=wpcom-auto-discovery" /><link rel="alternate" type="application/xml+oembed" href="http://public-api.wordpress.com/oembed/1.0/?format=xml&amp;url=http%3A%2F%2Ftwrightson.wordpress.com%2F2012%2F01%2F02%2Fcapturing-windows-7-credentials-at-logon-using-custom-credential-provider%2F&amp;for=wpcom-auto-discovery" />
+<!-- Jetpack Open Graph Tags -->
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Capturing Windows 7 Credentials at Logon Using Custom Credential Provider" />
+<meta property="og:url" content="http://twrightson.wordpress.com/2012/01/02/capturing-windows-7-credentials-at-logon-using-custom-credential-provider/" />
+<meta property="og:description" content="For the Eternally Impatient The quick lowdown: I wrote a DLL capable of logging the credentials entered at logon for Windows Vista, 7 and future versions which you can download at http://www.leetsy..." />
+<meta property="og:site_name" content="Tyler Wrightson&#039;s Security Blog" />
+<meta property="og:image" content="http://i0.wp.com/twrightson.files.wordpress.com/2012/01/credprovider1.jpg?fit=1000%2C1000" />
+<meta property="og:image" content="http://i0.wp.com/twrightson.files.wordpress.com/2012/01/cp-tiles.jpg?fit=1000%2C1000" />
+<meta name="twitter:site" content="@wordpressdotcom" />
+<meta name="twitter:image" content="http://i0.wp.com/twrightson.files.wordpress.com/2012/01/credprovider1.jpg?fit=1000%2C1000" />
+<meta name="twitter:card" content="photo" />
+<meta name="twitter:creator" content="@wordpressdotcom" />
+<meta property="fb:app_id" content="249643311490" />
+<link rel="shortcut icon" type="image/x-icon" href="../../../../../s2.wp.com/i/favicon.ico%3Fm=1311975824g" sizes="16x16 24x24 32x32 48x48" />
+<link rel="icon" type="image/x-icon" href="../../../../../s2.wp.com/i/favicon.ico%3Fm=1311975824g" sizes="16x16 24x24 32x32 48x48" />
+<link rel="apple-touch-icon-precomposed" href="http://s0.wp.com/i/webclip.png?m=1355642671g" />
+<link rel='openid.server' href='http://twrightson.wordpress.com/?openidserver=1' />
+<link rel='openid.delegate' href='http://twrightson.wordpress.com/' />
+<link rel="search" type="application/opensearchdescription+xml" href="http://twrightson.wordpress.com/osd.xml" title="Tyler Wrightson&#039;s Security Blog" />
+<link rel="search" type="application/opensearchdescription+xml" href="http://wordpress.com/opensearch.xml" title="WordPress.com" />
+		<style>
+		/* <![CDATA[ */
+		/* Block: reblog */
+		
+		.reblog-from img                   { margin: 0 10px 0 0; vertical-align: middle; padding: 0; border: 0; }
+		.reblogger-note img.avatar         { float: left; padding: 0; border: 0; }
+		.reblogger-note-content            { margin: 0 0 20px; }
+		.reblog-post .wpcom-enhanced-excerpt-content { border-left: 3px solid #eee; padding-left: 15px; }
+		.reblog-post ul.thumb-list         { display: block; list-style: none; margin: 2px 0; padding: 0; clear: both; }
+		.reblog-post ul.thumb-list li      { display: inline; margin: 0; padding: 0 1px; border: 0; }
+		.reblog-post ul.thumb-list li a    { margin: 0; padding: 0; border: 0; }
+		.reblog-post ul.thumb-list li img  { margin: 0; padding: 0; border: 0; }
+		
+		.reblog-post .wpcom-enhanced-excerpt { clear: both; }
+		
+		.reblog-post .wpcom-enhanced-excerpt address,
+		.reblog-post .wpcom-enhanced-excerpt li,
+		.reblog-post .wpcom-enhanced-excerpt h1,
+		.reblog-post .wpcom-enhanced-excerpt h2,
+		.reblog-post .wpcom-enhanced-excerpt h3,
+		.reblog-post .wpcom-enhanced-excerpt h4,
+		.reblog-post .wpcom-enhanced-excerpt h5,
+		.reblog-post .wpcom-enhanced-excerpt h6,
+		.reblog-post .wpcom-enhanced-excerpt p { font-size: 100% !important; }
+		
+		.reblog-post .wpcom-enhanced-excerpt blockquote,
+		.reblog-post .wpcom-enhanced-excerpt pre,
+		.reblog-post .wpcom-enhanced-excerpt code,
+		.reblog-post .wpcom-enhanced-excerpt q { font-size: 98% !important; }
+		
+
+		/* ]]> */
+		</style>
+		<style type="text/css">
+.widget_twitter li {
+	word-wrap: break-word;
+}
+</style>
+<meta name="application-name" content="Tyler Wrightson&#039;s Security Blog" /><meta name="msapplication-window" content="width=device-width;height=device-height" /><meta name="msapplication-tooltip" content="Attack, Defense, Forensics, Coding... Security" /><meta name="msapplication-task" content="name=Subscribe;action-uri=http://twrightson.wordpress.com/feed/;icon-uri=http://s2.wp.com/i/favicon.ico" /><meta name="msapplication-task" content="name=Sign up for a free blog;action-uri=http://wordpress.com/signup/;icon-uri=http://s2.wp.com/i/favicon.ico" /><meta name="msapplication-task" content="name=WordPress.com Support;action-uri=http://support.wordpress.com/;icon-uri=http://s2.wp.com/i/favicon.ico" /><meta name="msapplication-task" content="name=WordPress.com Forums;action-uri=http://forums.wordpress.com/;icon-uri=http://s2.wp.com/i/favicon.ico" /><meta name="title" content="Capturing Windows 7 Credentials at Logon Using Custom Credential&nbsp;Provider | Tyler Wrightson&#039;s Security Blog on WordPress.com" />
+<meta name="description" content="For the Eternally Impatient The quick lowdown: I wrote a DLL capable of logging the credentials entered at logon for Windows Vista, 7 and future versions which you can download at http://www.leetsys.com/programs/credentialprovider/cp.zip.  The credentials are logged to a file located at c:\cplog.txt.  Simply copy the dll to the system32 directory and run the included register.reg&hellip;" />
+
+<script type='text/javascript' src='../../../../../partner.googleadservices.com/gampad/google_service.js'>
+</script>
+<script type='text/javascript'>
+if ( typeof GS_googleAddAdSenseService == 'function' ) { GS_googleAddAdSenseService("ca-pub-3443918307802676"); }
+if ( typeof GS_googleEnableAllServices == 'function' ) { GS_googleEnableAllServices() };
+</script>
+<script type='text/javascript'>
+if ( typeof GA_googleAddSlot == 'function' ) { GA_googleAddSlot("ca-pub-3443918307802676", "wpcom_below_post"); }
+</script>
+<script type='text/javascript'>
+if ( typeof GA_googleFetchAds == 'function' ) { GA_googleFetchAds(); }
+</script>
+
+<script type="text/javascript">
+var wpcom_ads = { bid: 4729478, pt: 'permalink', wa: 0, as: 0, domain: 'twrightson.wordpress.com', url: 'http://twrightson.wordpress.com/2012/01/02/capturing-windows-7-credentials-at-logon-using-custom-credential-provider/', gid: '', };
+</script>
+<style id="syntaxhighlighteranchor"></style>
+<script type="text/javascript"> 
+	window.google_analytics_uacct = "UA-52447-2"; 
+</script>
+
+<script type="text/javascript">
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-52447-2']);
+	_gaq.push(['_setDomainName', 'wordpress.com']);
+	_gaq.push(['_initData']);
+	_gaq.push(['_trackPageview']);
+
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ga);
+	})();
+</script>
+</head>
+
+<body class="single single-post postid-208 single-format-standard mp6 highlander-enabled highlander-light">
+
+	<div id="container">
+
+		<div class="wrap">
+
+			
+			
+			<div id="header">
+
+				<div id="branding">
+
+					<h1 id="site-title">
+						<a href="http://twrightson.wordpress.com/" title="Tyler Wrightson&#039;s Security Blog" rel="Home">
+							Tyler Wrightson&#039;s Security Blog						</a>
+					</h1>
+
+				</div><!-- #branding -->
+
+				<div id="menu-primary" class="menu-container">
+
+					<div class="menu"><ul><li class="page_item page-item-2"><a href="http://twrightson.wordpress.com/about/">About</a></li><li class="page_item page-item-95"><a href="http://twrightson.wordpress.com/quotes/">Quotes</a></li><li class="page_item page-item-465"><a href="http://twrightson.wordpress.com/rand/">Rand</a></li><li class="page_item page-item-460"><a href="http://twrightson.wordpress.com/videos/">Videos</a></li></ul></div>
+
+				</div><!-- #menu-primary .menu-container -->
+
+				<div id="site-description">
+					<span>Attack, Defense, Forensics, Coding&#8230; Security</span>
+				</div>
+
+			</div><!-- #header -->
+
+			<div id="main">
+	<div id="content">
+
+		<div class="hfeed">
+
+			
+				
+					<div id="post-208" class="post-208 post type-post status-publish format-standard hentry category-backdoors category-programs">
+
+						<h1 class="entry-title">Capturing Windows 7 Credentials at Logon Using Custom Credential&nbsp;Provider</h1>
+						<div class="byline">
+							<abbr class="published" title="January 2, 2012 12:33 pm">January 2, 2012</abbr> &middot;							by <span class="author vcard"><a href="http://twrightson.wordpress.com/author/twrightson/" title="Posts by twrightson" rel="author">twrightson</a></span> &middot;							in <a href="http://twrightson.wordpress.com/category/programs/backdoors/" title="View all posts in backdoors" rel="category tag">backdoors</a>, <a href="http://twrightson.wordpress.com/category/programs/" title="View all posts in Programs" rel="category tag">Programs</a>							<span class="edit"></span>
+						</div>
+
+						<div class="entry-content">
+
+							<p><strong>For the Eternally Impatient</strong></p>
+<p>The quick lowdown: I wrote a DLL capable of logging the credentials entered at logon for Windows Vista, 7 and future versions which you can download at <a title="http://www.leetsys.com/programs/credentialprovider/cp.zip" href="http://www.leetsys.com/programs/credentialprovider/cp.zip" target="_blank">http://www.leetsys.com/programs/credentialprovider/cp.zip</a>.  The credentials are logged to a file located at c:\cplog.txt.  Simply copy the dll to the system32 directory and run the included register.reg script to create the necessary registry settings.</p>
+<p><strong>The Detailed Technical Information</strong></p>
+<p>I started testing my rootkit on a windows 7 box and luckily most of it worked.  The only thing that wasn&#8217;t working was the ability to log credentials typed in when a user first logs in to Windows.  I&#8217;ve had a custom GINA stub dll that&#8217;s worked great for a while that I wrote years ago, it works with Windows 2000, XP and 2003.  GINA is the Graphical Identification and Authentication component of Windows and handles the logon screen that we&#8217;re all familiar with.  In the past you could choose to write your own GINA dll from scratch, or you could simply &#8216;extend&#8217; the functionality of other GINA modules by creating a GINA stub dll.</p>
+<p>Microsoft in their infinite wisdom decided to completely change the API and move away from GINA and the GINA model.  Now to customize the logon experience you have to implement a Credential Provider, this is true for Windows Vista and newer (7 and 2008).  Microsoft claims the reasoning behind this is to make it easier for developers to meet the demands for next generation authentication technologies (like biometrics, two factor and single sign on).  Frankly in a way Credential Providers are a lot easier to work with, but in another (probably more accurate way) they&#8217;re a huge pain in the ass to create our nefarious dll.  From what I remember creating a GINA stub dll to log Windows credentials took me probably 3 hours.  To get a credential provider to do exactly what I want took probably a good 40 hours.  At this point I should probably thank my girlfriend for putting up with my obsessive programming and constant cursing.</p>
+<p><strong>The Credential Provider Model</strong></p>
+<p>I won&#8217;t go over how GINA handled the authentication process, although if i get enough requests I might detail that in another post.  Instead I&#8217;ll focus on how the Credential Provider Model works.  Credential Providers are &#8216;In-Process COM objects&#8217;, aka a DLL.  Out of process COM objects would essentially be another executable that the interacting exe would interface with.  COM or Component Object Model is a pretty ethereal term, it&#8217;s basically a binary standard and language neutral way of implementing inter process communication, among other things.  This is obviously oversimplifying it, but this isn&#8217;t a discussion on COM.  This was my first time working with COM programming so that definitely accounts for some of the additional time.</p>
+<p>The default credential provider is the PasswordProvider that comes with Windows 7 and has a GUID of 6f45dc1e-5384-457a-bc13-2cd81b0d28ed.  GUIDs are simply unique identifiers for our COM object.  One of the most important things to understand is that Credential Providers are not responsible for actually authenticating users.  It simply gathers the necessary information, &#8216;serializes&#8217; the data, and then hands off the credentials to the Local System Authority.  Serializing the data simply involves putting the username and password (and potentially other variables) in a specific format and passing them back to logonui which then hands it off to the LSA.</p>
+<p>A Tile is a new term for an important component of a Credential Provider.  Credential providers are represented by unique tiles at the logon screen, although it&#8217;s not a one to one mapping of one tile for each Credential Provider.  For example the default password provider enumerates credentials or user accounts and creates a unique tile for each username.  The user can then click the tile for their username, type in the password and be authenticated.  Although the Credential Provider is not directly responsible for creating the graphical elements it does instruct Logonui of the fields it wishes to present to the user, this does actually make things a lot easier than programming the entire interface.</p>
+<p>In this image you&#8217;ll see that we have two credential providers co-existing.  The default passwordprovider is on the left and our credential provider is on the right.</p>
+<p><a href="http://twrightson.files.wordpress.com/2012/01/cp-tiles.jpg"><img class="alignleft size-medium wp-image-235" title="CP-Tiles" src="../../../../../twrightson.files.wordpress.com/2012/01/cp-tiles.jpg%3Fw=300&amp;h=112" alt="" width="300" height="112" /></a></p>
+<p>You&#8217;ll notice that in this scenario there&#8217;s no way for the user to distinguish between the two credential providers.  So we need a way to &#8216;force&#8217; the user into only using our credential provider.  There&#8217;s no way to truly &#8216;force&#8217; a user to use a particular credential provider when multiple credential providers are presented.  To accomplish our goal we can use the CredentialProviderFilter interface to filter out any other credential providers, more on this shortly.</p>
+<p>Winlogon.exe launches Logonui.exe which then queries the credential provider and the credential provider returns information to logonui.  The credential providers are defined in the registry and referenced by a GUID (a unique ID).  The location in the registry where credential providers are defined is: HKLM\Software\Microsoft\Windows\CurrentVersion\Authentication\CredentialProviders.  To add a credential provider we create a new key with the GUID of the provider and copy the dll to the system32 directory. this is handled by the register.reg file included with ours.</p>
+<p><strong>Credential Provider Wrapper</strong></p>
+<p>We have the option of creating our own credential provider from scratch, filtering out any other provider and logging the credentials.  This isn&#8217;t optimal for a few reasons.  Besides the fact that it&#8217;s a considerable amount of work to create a credential provider to mimic all the existing functionality the main reason we don&#8217;t want to do this is because we can&#8217;t guarantee that the target system we wish to deploy our rogue credential provider on will look and feel exactly as the user expects it to.  For example if the company has deployed a new credential provider to ask the user additional questions during log in and our credential provider does not include those same questions this could set off a huge red flag for anyone using that system.</p>
+<p><img class="alignleft size-medium wp-image-254" title="CredProvider" src="../../../../../twrightson.files.wordpress.com/2012/01/credprovider1.jpg%3Fw=288&amp;h=300" alt="" width="288" height="300" /></p>
+<p>Thus the best solution for us is to wrap the existing credential providers.  The new process flow with a wrapped provider looks like this figure.  Logonui will make the function calls into our custom credential provider, we can then choose to either handle processing for that function or hand it off to the wrapped credential provider.</p>
+<p>We actually have many choices on how to log the username and password using our credential provider wrapper.  The solution I chose was to manipulate the SetStringValue function.  This function is called every time a user types a key for any field in the credential provider.  Thus when a user types in a key we simply write that key to a file.  This also allows us to capture ANYTHING a user types in to a field when they logon, so our provider should grab everything for next gen or non standard credential providers.</p>
+<p>We also manipulate the GetStringValue function which gives us the string value of fields in the credential provider.  This is handy because the default password provider does not prompt the user for their username.  Instead the user clicks a tile with their username already filled in, thus we can&#8217;t get the username from the SetStringValue function.</p>
+<p>The implementation of my code to grab the user from the GetStringValue function demonstrates a handy feature of the way the wrapped and wrapper relationship works.  In the sample wrapper from the Windows SDK logonui calls our getstringvalue function and we simply hand the variables off directly to the wrapped credential provider.  The wrapped credential provider then performs the work of the getstringvalue function, everything works as it should, and all is good in the world.  Since the ppwsz variable we give to the wrapped credential provider is a pointer to the PWSTR variable that will contain the string of the field specified we can access this variable when the wrapped function returns.  Thus rather than implementing the getstringvalue function we simply hand off the variables as usual and print out the string from the pointer after the real function does all the work and returns.</p>
+<p>The function for handing off the work for the GetStringValue function to our wrapped provider looks like this;</p>
+<p>hr = _pWrappedCredential-&gt;GetStringValue(dwFieldID, ppwsz);</p>
+<p><strong>CredentialProviderFilter</strong></p>
+<p>As part of the custom credential provider I implemented the credential provider filter.  This might be one of the most helpful parts of this project/post for other developers.  Microsoft has an FAQ included with their SDK samples for Credential Providers that states they will NOT release a sample credential provider filter&#8230; Thanks Microsoft for releasing a complex API and offering ZERO help, terrific.</p>
+<p>Luckily I was able to find a broken example online, fix it, fill in some gaps and now it&#8217;s fully functional.  Thank you to the anonymous person who started the effort.  Credential Providers are defined in the registry as well at HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Authentication\Credential Provider Filters\.  Again all you have to do is create a key with the GUID of the filter.  This is included in the register.reg file included with my credential provider.</p>
+<p>Logonui will call the Filter function for any configured credential provider filters.  It will pass a BOOL variable for every credential provider configured, at which point the Filter can choose to allow or deny the specified credential provider by setting the BOOL variable to true or false.</p>
+<p>Currently my filter only filters out the password provider, but it&#8217;s incredibly easy to change it to filter out all other providers.  The following evaluation checks to see if the credential provider GUID matches that of the default password provider, if so it filters it out by setting the rgbAllow BOOL to FALSE.  You could change this evaluation to always be true and filter out all providers.</p>
+<p>if (IsEqualGUID(rgclsidProviders[i], CLSID_PasswordCredentialProvider))<br />
+rgbAllow[i] = FALSE;</p>
+<p><strong>Special Notes about The Credential Provider Wrapper</strong></p>
+<p>I originally had some issues when trying to compile on Visual Studio 2010 Express so I used Visual Studio 2008 Express and everything was fine.  I have no doubt you could get this to compile with 2010, I just didn&#8217;t feel like wasting time on it.  In addition I had to use the _CRT_SECURE_NO_WARNINGS preprocessor settings which are defined under the properties for the project in Visual Studio, under C/C++ -&gt; Preprocessor Definitions.  This allows us to use the fopen function rather than fopen_s, again, just laziness on my side.  If Microsoft wants to force me to use a specific function it makes me want to do it less, just stubbornness from my childhood that&#8217;s stuck.</p>
+<p>I also had to use the following two defines to suppress the error 4995.</p>
+<p>#define DEPRECATE_SUPPORTED<br />
+#pragma warning(disable:4995)</p>
+<p>The GUID can be changed to whatever you want, just manipulate the define in the guid.h file.  One of the best resources I found for helping to understand development of a credential provider was the &#8216;Credential Provider Technical Doc.doc&#8217;, I&#8217;ve included a copy of this doc in my full archive for the credential provider in case the link is ever broken on the interwebs.  You can download the source and dll at <a title="http://www.leetsys.com/programs/credentialprovider/cp-devel.zip" href="http://www.leetsys.com/programs/credentialprovider/cp-devel.zip" target="_blank">http://www.leetsys.com/programs/credentialprovider/cp-devel.zip</a></p>
+
+<div class="wpa" style="position: relative; width:300px; text-align: center; padding: 0; margin: 10px auto; overflow: hidden; clear: both;">
+<a style="position: absolute; text-align: left; display: block; font: 9px/1 sans-serif; text-decoration: underline;" href="http://en.wordpress.com/about-these-ads/" rel="nofollow">About these ads</a>
+<script type="text/javascript">
+		var wpcom_adclk_hovering = false;
+		var wpcom_adclk_recorded = false;
+		var wpcom_adclk_theme = "Origin";
+		var wpcom_adclk_slot = "wpcom_below_post";
+		var wpcom_adclk_network = ( typeof wpcom_adclk_network === "undefined" ) ? "" : wpcom_adclk_network ;
+
+		jQuery(document).ready( function() {
+			function wpcom_adclk_hover_yes() { wpcom_adclk_hovering = true; }
+			function wpcom_adclk_hover_no() { wpcom_adclk_hovering = false; }
+			jQuery(".wpa").click(wpcom_adclk_click);
+			jQuery(".wpa iframe").hover( wpcom_adclk_hover_yes, wpcom_adclk_hover_no );
+			jQuery(".wpa object").hover( wpcom_adclk_hover_yes, wpcom_adclk_hover_no );
+
+			jQuery(window).blur( function() {
+				if ( wpcom_adclk_hovering ) { wpcom_adclk_click(); }
+			});
+		});
+
+		function wpcom_adclk_impression() {
+			var stat_gif = document.location.protocol + "//stats.wordpress.com/g.gif?v=wpcom-no-pv";
+			stat_gif += "&x_ads_imp_theme=" + wpcom_adclk_theme;
+			stat_gif += "&x_ads_imp_placement="+wpcom_adclk_slot;
+			stat_gif += "&x_ads_imp_network=" + wpcom_adclk_network;
+			stat_gif += "&x_ads_imp_theme_network="+wpcom_adclk_theme+"_"+wpcom_adclk_network;
+			new Image().src = stat_gif + "&baba=" + Math.random();
+			return true;
+		}
+
+		function wpcom_adclk_click() {
+			if (wpcom_adclk_recorded) { return true; } // no double counting
+			var stat_gif = document.location.protocol + "//stats.wordpress.com/g.gif?v=wpcom-no-pv";
+			stat_gif += "&x_ads_click_theme=" + wpcom_adclk_theme;
+			stat_gif += "&x_ads_click_placement="+wpcom_adclk_slot;
+			stat_gif += "&x_ads_click_network=" + wpcom_adclk_network;
+			stat_gif += "&x_ads_click_theme_network="+wpcom_adclk_theme+"_"+wpcom_adclk_network;
+
+			new Image().src = stat_gif + "&baba=" + Math.random();
+			wpcom_adclk_recorded = true;
+			var now=new Date(); var end=now.getTime()+250;
+			while(true){now=new Date();if(now.getTime()>end){break;}}
+			return true;
+		}
+	
+if ( typeof GA_googleAddAttr == 'function' ) {
+GA_googleAddAttr("AdOpt", "1");
+GA_googleAddAttr("Origin", "other");
+GA_googleAddAttr("LangId", "1");
+GA_googleAddAttr("Domain", "twrightson.wordpress.com");
+GA_googleAddAttr("BlogId", "4729478");
+GA_googleAddAttr("Autotag", "technology");
+GA_googleAddAttr("Tag", "backdoors");
+GA_googleAddAttr("Tag", "programs");
+GA_googleAddAttr("theme_bg", "ffffff");
+GA_googleAddAttr("theme_text", "000000");
+GA_googleAddAttr("theme_link", "dd5424");
+GA_googleAddAttr("theme_border", "CCCCCC");
+GA_googleAddAttr("theme_url", "dd5424");
+GA_googleAddAdSensePageAttr("google_page_url", "http://twrightson.wordpress.com/2012/01/02/capturing-windows-7-credentials-at-logon-using-custom-credential-provider/");
+GA_googleFillSlot("wpcom_below_post");
+}
+</script>
+</div>
+<style type="text/css">
+div.wpa>div { margin-top: 1em; }
+</style>
+<script type="text/javascript">
+jQuery( window ).load( function() {
+    if ( jQuery(".wpa script[src*='shareth.ru']").length > 0 || jQuery(".wpa iframe[src*='boomvideo.tv']").length > 0 || jQuery(".wpa iframe[src*='viewablemedia.net']").length > 0 || jQuery(".wpa .sharethrough-placement").length > 0 ) {
+        jQuery( '.wpa' ).css( 'width', '400px' );
+    }
+setTimeout(function(){if(typeof GS_googleAddAdSenseService !== 'function'){new Image().src=document.location.protocol+"//stats.wordpress.com/g.gif?v=wpcom-no-pv&x_noads=adblock&baba="+Math.random()}},100);
+} );
+</script>
+<div id="jp-post-flair" class="sharedaddy sd-like-enabled"><div class='sharedaddy sd-block sd-like jetpack-likes-widget-wrapper jetpack-likes-widget-unloaded' id='like-post-wrapper-4729478-208-5211fb76d9d86' data-src='//widgets.wp.com/likes/#blog_id=4729478&amp;post_id=208&amp;origin=twrightson.wordpress.com&amp;obj_id=4729478-208-5211fb76d9d86' data-name='like-post-frame-4729478-208-5211fb76d9d86'><h3 class='sd-title'>Like this:</h3><div class='post-likes-widget-placeholder' style='height:55px'><span class='button'><span>Like</span></span> <span class="loading">Loading...</span></div><span class='sd-text-color'></span><a class='sd-link-color'></a></div></div>
+							
+							
+						</div><!-- .entry-content -->
+
+					</div><!-- .hentry -->
+
+					
+					
+<div id="comments-template">
+
+	<div class="comments-wrap">
+
+		<div id="comments">
+
+			
+				<h3 id="comments-number" class="comments-header block-title"><span>14 Comments</span></h3>
+
+				<ol class="commentlist">
+					
+	<li id="comment-51" class="class="comment even thread-even depth-1 highlander-comment"">
+
+		<div class="comment-wrap">
+
+			<img alt='' src='../../../../../0.gravatar.com/avatar/c97fea8f3d9d7fe76c10be42548c7484%3Fs=50&amp;d=identicon&amp;r=G' class='avatar avatar-50' height='50' width='50' />
+			<div class="comment-meta">
+									<cite><a href='http://whatwebsite?' rel='external nofollow' class='url'>dan</a></cite>								&middot; <time><a href="index.html#comment-51">March 6, 2012 - 12:21 pm</a></time>
+				 &middot; <a class='comment-reply-link' href='http://twrightson.wordpress.com/2012/01/02/capturing-windows-7-credentials-at-logon-using-custom-credential-provider/?replytocom=51#respond' onclick='return addComment.moveForm("comment-51", "51", "respond", "208")'>Reply</a>&rarr;			</div>
+
+			<div class="comment-content comment-text">
+
+				
+				<p>Good work &#8211; 6 years ago I had created a GINA stub that simply wrote the pswd out to a file and then jumped to an external reference to the original GINA that I included.  It worked for our pen tests but I saw the direction that MS was going with Cred Providers and retired my minimal C skills.  Still love writing in Assembler so when I get motivated I will re-write this is ASM &#8211; where I have some skills still.</p>
+<p>Again &#8211; good work &#8211; hope your girlfriend takes you back :-)</p>
+			</div><!-- .comment-content .comment-text -->
+
+		</div><!-- .comment-wrap -->
+
+	
+</li><!-- #comment-## -->
+
+	<li id="comment-55" class="class="comment odd alt thread-odd thread-alt depth-1 highlander-comment"">
+
+		<div class="comment-wrap">
+
+			<img alt='' src='../../../../../0.gravatar.com/avatar/04b6aa2c30083bfbaa7f432e2a160072%3Fs=50&amp;d=identicon&amp;r=G' class='avatar avatar-50' height='50' width='50' />
+			<div class="comment-meta">
+									<cite>Trent</cite>								&middot; <time><a href="index.html#comment-55">June 21, 2012 - 3:26 pm</a></time>
+				 &middot; <a class='comment-reply-link' href='http://twrightson.wordpress.com/2012/01/02/capturing-windows-7-credentials-at-logon-using-custom-credential-provider/?replytocom=55#respond' onclick='return addComment.moveForm("comment-55", "55", "respond", "208")'>Reply</a>&rarr;			</div>
+
+			<div class="comment-content comment-text">
+
+				
+				<p>Unless I&#8217;m missing something, that last archive (cp-devel.zip) doesn&#8217;t contain any of the provider filter code.</p>
+			</div><!-- .comment-content .comment-text -->
+
+		</div><!-- .comment-wrap -->
+
+	
+<ol class="children">
+
+	<li id="comment-56" class="class="comment even depth-2 highlander-comment"">
+
+		<div class="comment-wrap">
+
+			<img alt='' src='../../../../../0.gravatar.com/avatar/04b6aa2c30083bfbaa7f432e2a160072%3Fs=50&amp;d=identicon&amp;r=G' class='avatar avatar-50' height='50' width='50' />
+			<div class="comment-meta">
+									<cite>Trent</cite>								&middot; <time><a href="index.html#comment-56">June 21, 2012 - 3:29 pm</a></time>
+				 &middot; <a class='comment-reply-link' href='http://twrightson.wordpress.com/2012/01/02/capturing-windows-7-credentials-at-logon-using-custom-credential-provider/?replytocom=56#respond' onclick='return addComment.moveForm("comment-56", "56", "respond", "208")'>Reply</a>&rarr;			</div>
+
+			<div class="comment-content comment-text">
+
+				
+				<p>yep, I was missing something. Saw the empty filter.cpp and filter.h files and jumped to conclusions. You can delete both comments.</p>
+<p>Thanks.</p>
+			</div><!-- .comment-content .comment-text -->
+
+		</div><!-- .comment-wrap -->
+
+	
+</li><!-- #comment-## -->
+</ol><!-- .children -->
+</li><!-- #comment-## -->
+
+	<li id="comment-62" class="class="comment odd alt thread-even depth-1 highlander-comment"">
+
+		<div class="comment-wrap">
+
+			<img alt='' src='../../../../../0.gravatar.com/avatar/613fb7900e580dde2c4609c658645cfc%3Fs=50&amp;d=identicon&amp;r=G' class='avatar avatar-50' height='50' width='50' />
+			<div class="comment-meta">
+									<cite><a href='http://www.object-vision.com' rel='external nofollow' class='url'>Rick McGee</a></cite>								&middot; <time><a href="index.html#comment-62">July 31, 2012 - 11:02 am</a></time>
+				 &middot; <a class='comment-reply-link' href='http://twrightson.wordpress.com/2012/01/02/capturing-windows-7-credentials-at-logon-using-custom-credential-provider/?replytocom=62#respond' onclick='return addComment.moveForm("comment-62", "62", "respond", "208")'>Reply</a>&rarr;			</div>
+
+			<div class="comment-content comment-text">
+
+				
+				<p>Writing a GINA stub for is not a simple process as I embarked on this journey in 2004.  Capturing a user’s credentials is one thing, capturing a user’s password during login is another matter altogether.  Hooking the NT Authority security context was easier; defeating “all” local security implementations.  My project included writing data to a custom Windows Event Log among other things.  I secured a federally registered copyright for this effort (See “Patriot Computer Software”, February 2006).  As a former federal government employee, I lost my job over the entire matter. Reporting this vulnerability to Microsoft in 2008 via Dr. Mark Russinovich, yielded a ridiculous reply from their CERTS ~ reciting Microsoft’s “10 Immutable Laws of Security -&gt; Law #6: A computer is only as secure as the administrator is trustworthy”.  <a href="mailto:rick.mcgee@object-vision.com">rick.mcgee@object-vision.com</a> Write, as I might make it available for download and evaluation.</p>
+			</div><!-- .comment-content .comment-text -->
+
+		</div><!-- .comment-wrap -->
+
+	
+</li><!-- #comment-## -->
+
+	<li id="comment-69" class="class="comment even thread-odd thread-alt depth-1 highlander-comment"">
+
+		<div class="comment-wrap">
+
+			<img alt='' src='../../../../../1.gravatar.com/avatar/11f2d6c521eb39a09cde63fc41c6f676%3Fs=50&amp;d=identicon&amp;r=G' class='avatar avatar-50' height='50' width='50' />
+			<div class="comment-meta">
+									<cite>JW</cite>								&middot; <time><a href="index.html#comment-69">August 26, 2012 - 11:41 pm</a></time>
+				 &middot; <a class='comment-reply-link' href='http://twrightson.wordpress.com/2012/01/02/capturing-windows-7-credentials-at-logon-using-custom-credential-provider/?replytocom=69#respond' onclick='return addComment.moveForm("comment-69", "69", "respond", "208")'>Reply</a>&rarr;			</div>
+
+			<div class="comment-content comment-text">
+
+				
+				<p>Excellent write-up and great job on figuring out the filters implementation.</p>
+<p>Just FYI for those who may be trying to set this up or use it as an example, with vs2012 and the windows v8.0 sdk installed, the CLSID that is exported to user space for the default provider&#8230;</p>
+<p>CLSID_PasswordCredentialProvider</p>
+<p>used in CoCreateInstance call to attach the wrapper to the underlying provider is no longer the correct CLSID for a stock windows 7/vista setup. It now exports the windows 8 CLSID as default.</p>
+<p>This means that if you have already installed vs2012 and try to use the attached credential provider in this post it won&#8217;t load because it will try to attach to the new provider which isn&#8217;t in win7 yet.</p>
+<p>To fix, go into the SetUsageScenerio function of the sample provider class and change the CLSID passed to CoCreateInstance to </p>
+<p>CLSID_V1PasswordCredentialProvider</p>
+<p>After recompile follow install directions given in the post and it should attach to your win7 cred provider as expected.</p>
+			</div><!-- .comment-content .comment-text -->
+
+		</div><!-- .comment-wrap -->
+
+	
+<ol class="children">
+
+	<li id="comment-85" class="class="comment odd alt depth-2 highlander-comment"">
+
+		<div class="comment-wrap">
+
+			<img alt='' src='../../../../../1.gravatar.com/avatar/d337542b80902992cc68d0c6c84aa2fb%3Fs=50&amp;d=identicon&amp;r=G' class='avatar avatar-50' height='50' width='50' />
+			<div class="comment-meta">
+									<cite>bhm</cite>								&middot; <time><a href="index.html#comment-85">March 12, 2013 - 4:17 am</a></time>
+				 &middot; <a class='comment-reply-link' href='http://twrightson.wordpress.com/2012/01/02/capturing-windows-7-credentials-at-logon-using-custom-credential-provider/?replytocom=85#respond' onclick='return addComment.moveForm("comment-85", "85", "respond", "208")'>Reply</a>&rarr;			</div>
+
+			<div class="comment-content comment-text">
+
+				
+				<p>Saved my day with that comment about the changed constants in VS. .)</p>
+			</div><!-- .comment-content .comment-text -->
+
+		</div><!-- .comment-wrap -->
+
+	
+</li><!-- #comment-## -->
+</ol><!-- .children -->
+</li><!-- #comment-## -->
+
+	<li id="comment-72" class="class="comment even thread-even depth-1 highlander-comment"">
+
+		<div class="comment-wrap">
+
+			<img alt='' src='../../../../../0.gravatar.com/avatar/9c5ea0c54870f8f2010cc31f8b17252d%3Fs=50&amp;d=identicon&amp;r=G' class='avatar avatar-50' height='50' width='50' />
+			<div class="comment-meta">
+									<cite>Krzysztof Zajac</cite>								&middot; <time><a href="index.html#comment-72">September 14, 2012 - 5:43 pm</a></time>
+				 &middot; <a class='comment-reply-link' href='http://twrightson.wordpress.com/2012/01/02/capturing-windows-7-credentials-at-logon-using-custom-credential-provider/?replytocom=72#respond' onclick='return addComment.moveForm("comment-72", "72", "respond", "208")'>Reply</a>&rarr;			</div>
+
+			<div class="comment-content comment-text">
+
+				
+				<p>Hi, how are your changes to the Microsoft&#8217;s code licensed?</p>
+			</div><!-- .comment-content .comment-text -->
+
+		</div><!-- .comment-wrap -->
+
+	
+</li><!-- #comment-## -->
+
+	<li id="comment-82" class="class="comment odd alt thread-odd thread-alt depth-1 highlander-comment"">
+
+		<div class="comment-wrap">
+
+			<img alt='' src='../../../../../1.gravatar.com/avatar/10dae8d751bdfb36a271ebccb1b34c14%3Fs=50&amp;d=identicon&amp;r=G' class='avatar avatar-50' height='50' width='50' />
+			<div class="comment-meta">
+									<cite>Paul Schwartz</cite>								&middot; <time><a href="index.html#comment-82">March 6, 2013 - 4:01 pm</a></time>
+				 &middot; <a class='comment-reply-link' href='http://twrightson.wordpress.com/2012/01/02/capturing-windows-7-credentials-at-logon-using-custom-credential-provider/?replytocom=82#respond' onclick='return addComment.moveForm("comment-82", "82", "respond", "208")'>Reply</a>&rarr;			</div>
+
+			<div class="comment-content comment-text">
+
+				
+				<p>Great stuff, thanks you cleared up some issues I was having with a provider I&#8217;m developing. For your next miracle, if you know any good articles on Local Security Providers I&#8217;ll name my next male child after you.</p>
+			</div><!-- .comment-content .comment-text -->
+
+		</div><!-- .comment-wrap -->
+
+	
+</li><!-- #comment-## -->
+
+	<li id="comment-87" class="class="comment even thread-even depth-1 highlander-comment"">
+
+		<div class="comment-wrap">
+
+			<img alt='' src='../../../../../2.gravatar.com/avatar/24cd6ea839e4542fa6815aa3beb18de0%3Fs=50&amp;d=identicon&amp;r=G' class='avatar avatar-50' height='50' width='50' />
+			<div class="comment-meta">
+									<cite>Robert Insomniac</cite>								&middot; <time><a href="index.html#comment-87">March 20, 2013 - 2:58 pm</a></time>
+				 &middot; <a class='comment-reply-link' href='http://twrightson.wordpress.com/2012/01/02/capturing-windows-7-credentials-at-logon-using-custom-credential-provider/?replytocom=87#respond' onclick='return addComment.moveForm("comment-87", "87", "respond", "208")'>Reply</a>&rarr;			</div>
+
+			<div class="comment-content comment-text">
+
+				
+				<p>This works pretty well on x86 Windows 7 Pro. But how about to build a x64 version?</p>
+			</div><!-- .comment-content .comment-text -->
+
+		</div><!-- .comment-wrap -->
+
+	
+<ol class="children">
+
+	<li id="comment-88" class="class="comment byuser comment-author-twrightson bypostauthor odd alt depth-2 highlander-comment"">
+
+		<div class="comment-wrap">
+
+			<img alt='' src='../../../../../0.gravatar.com/avatar/3e3bd3d7575624258185c1b656b60f56%3Fs=50&amp;d=identicon&amp;r=G' class='avatar avatar-50' height='50' width='50' />
+			<div class="comment-meta">
+									<cite>twrightson</cite>								&middot; <time><a href="index.html#comment-88">March 23, 2013 - 11:21 am</a></time>
+				 &middot; <a class='comment-reply-link' href='http://twrightson.wordpress.com/2012/01/02/capturing-windows-7-credentials-at-logon-using-custom-credential-provider/?replytocom=88#respond' onclick='return addComment.moveForm("comment-88", "88", "respond", "208")'>Reply</a>&rarr;			</div>
+
+			<div class="comment-content comment-text">
+
+				
+				<p>Great.  I&#8217;ll try to find the time to get an X64 version rolled out soon.</p>
+			</div><!-- .comment-content .comment-text -->
+
+		</div><!-- .comment-wrap -->
+
+	
+</li><!-- #comment-## -->
+</ol><!-- .children -->
+</li><!-- #comment-## -->
+
+	<li id="comment-94" class="class="comment even thread-odd thread-alt depth-1 highlander-comment"">
+
+		<div class="comment-wrap">
+
+			<img alt='' src='../../../../../0.gravatar.com/avatar/9cf8cbf5537eea94350a84b91379e2cf%3Fs=50&amp;d=identicon&amp;r=G' class='avatar avatar-50' height='50' width='50' />
+			<div class="comment-meta">
+									<cite>Jposso</cite>								&middot; <time><a href="index.html#comment-94">May 2, 2013 - 10:02 pm</a></time>
+				 &middot; <a class='comment-reply-link' href='http://twrightson.wordpress.com/2012/01/02/capturing-windows-7-credentials-at-logon-using-custom-credential-provider/?replytocom=94#respond' onclick='return addComment.moveForm("comment-94", "94", "respond", "208")'>Reply</a>&rarr;			</div>
+
+			<div class="comment-content comment-text">
+
+				
+				<p>Here is a very high level article&#8230;<br />
+<a href="http://technet.microsoft.com/en-us/library/ff404303(v=ws.10)" rel="nofollow">http://technet.microsoft.com/en-us/library/ff404303(v=ws.10)</a>.aspx</p>
+<p>Details of wrapping and API&#8230;<br />
+<a href="http://archive.msdn.microsoft.com/Project/Download/FileDownload.aspx?ProjectName=ShellRevealed&#038;DownloadId=7341" rel="nofollow">http://archive.msdn.microsoft.com/Project/Download/FileDownload.aspx?ProjectName=ShellRevealed&#038;DownloadId=7341</a></p>
+<p>Happy coding&#8230;</p>
+			</div><!-- .comment-content .comment-text -->
+
+		</div><!-- .comment-wrap -->
+
+	
+</li><!-- #comment-## -->
+
+	<li id="comment-95" class="class="comment odd alt thread-even depth-1 highlander-comment"">
+
+		<div class="comment-wrap">
+
+			<img alt='' src='../../../../../2.gravatar.com/avatar/238346376d9643f60c34635fad6f9517%3Fs=50&amp;d=identicon&amp;r=G' class='avatar avatar-50' height='50' width='50' />
+			<div class="comment-meta">
+									<cite><a href='http://gravatar.com/pithhelmet8669' rel='external nofollow' class='url'>pithhelmet8669</a></cite>								&middot; <time><a href="index.html#comment-95">June 6, 2013 - 8:24 am</a></time>
+				 &middot; <a class='comment-reply-link' href='http://twrightson.wordpress.com/2012/01/02/capturing-windows-7-credentials-at-logon-using-custom-credential-provider/?replytocom=95#respond' onclick='return addComment.moveForm("comment-95", "95", "respond", "208")'>Reply</a>&rarr;			</div>
+
+			<div class="comment-content comment-text">
+
+				
+				<p>Tyler &#8211; and everyone -</p>
+<p>I got the 64 bit version working&#8230;.</p>
+<p>just had to set the VS2010 to compile for 64bit</p>
+<p>There was an error in a default config, indicating<br />
+you need to change the Treat Warnings as Errors to no (/WX-)</p>
+<p>I also added this pragma<br />
+#pragma warning(disable : 4786) </p>
+<p>compiled and tested on both x86 windows 7, and 64bit windows 7.</p>
+<p>Thank you!!</p>
+			</div><!-- .comment-content .comment-text -->
+
+		</div><!-- .comment-wrap -->
+
+	
+<ol class="children">
+
+	<li id="comment-106" class="class="comment even depth-2 highlander-comment"">
+
+		<div class="comment-wrap">
+
+			<img alt='' src='../../../../../2.gravatar.com/avatar/24cd6ea839e4542fa6815aa3beb18de0%3Fs=50&amp;d=identicon&amp;r=G' class='avatar avatar-50' height='50' width='50' />
+			<div class="comment-meta">
+									<cite>Robert Insomniac</cite>								&middot; <time><a href="index.html#comment-106">July 15, 2013 - 2:38 pm</a></time>
+				 &middot; <a class='comment-reply-link' href='http://twrightson.wordpress.com/2012/01/02/capturing-windows-7-credentials-at-logon-using-custom-credential-provider/?replytocom=106#respond' onclick='return addComment.moveForm("comment-106", "106", "respond", "208")'>Reply</a>&rarr;			</div>
+
+			<div class="comment-content comment-text">
+
+				
+				<p>Please upload x64 version to the file sharing (rghost or mediafire), so I&#8217;ll be able to download it. Thanks in advance!</p>
+			</div><!-- .comment-content .comment-text -->
+
+		</div><!-- .comment-wrap -->
+
+	
+<ol class="children">
+
+	<li id="comment-107" class="class="comment odd alt depth-3 highlander-comment"">
+
+		<div class="comment-wrap">
+
+			<img alt='' src='../../../../../2.gravatar.com/avatar/238346376d9643f60c34635fad6f9517%3Fs=50&amp;d=identicon&amp;r=G' class='avatar avatar-50' height='50' width='50' />
+			<div class="comment-meta">
+									<cite><a href='http://gravatar.com/pithhelmet8669' rel='external nofollow' class='url'>pithhelmet8669</a></cite>								&middot; <time><a href="index.html#comment-107">July 18, 2013 - 1:13 pm</a></time>
+				 &middot; 			</div>
+
+			<div class="comment-content comment-text">
+
+				
+				<p>Hi Robert -<br />
+I&#8217;m sorry, i do not understand your request.  Do you want me to upload the IDE settings, or the IDE itself or the code?   The code did not change, just a couple of configs in the IDE and your good to go.</p>
+			</div><!-- .comment-content .comment-text -->
+
+		</div><!-- .comment-wrap -->
+
+	
+</li><!-- #comment-## -->
+</ol><!-- .children -->
+</li><!-- #comment-## -->
+</ol><!-- .children -->
+</li><!-- #comment-## -->
+				</ol><!-- .comment-list -->
+
+				
+			
+		</div><!-- #comments -->
+
+										<div id="respond" class="comment-respond">
+				<h3 id="reply-title" class="comment-reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="index.html#respond" style="display:none;">Cancel reply</a></small></h3>
+									<form action="http://twrightson.wordpress.com/wp-comments-post.php" method="post" id="commentform" class="comment-form">
+																										
+
+
+												<input type="hidden" id="highlander_comment_nonce" name="highlander_comment_nonce" value="4fe14a2490" /><input type="hidden" name="_wp_http_referer" value="/2012/01/02/capturing-windows-7-credentials-at-logon-using-custom-credential-provider/" />
+<input type="hidden" name="hc_post_as" id="hc_post_as" value="guest" />
+
+<div class="comment-form-field comment-textarea">
+	<label for="comment">Enter your comment here...</label>
+	<div id="comment-form-comment"><textarea id="comment" name="comment" title="Enter your comment here..."></textarea></div>
+</div>
+
+<div id="comment-form-identity">
+
+	<div id="comment-form-nascar">
+		<p>Fill in your details below or click an icon to log in:</p>
+		<ul>
+			<li class="selected" style="display:none;">
+				<a href="index.html#comment-form-guest" id="postas-guest" title="Guest">
+					<span></span>
+				</a>
+			</li>
+			<li>
+				<a href="index.html#comment-form-load-service:WordPress.com" id="postas-wordpress" title="WordPress.com">
+					<span></span>
+				</a>
+			</li>
+			<li>
+				<a href="index.html#comment-form-load-service:Twitter" id="postas-twitter" title="Twitter">
+					<span></span>
+				</a>
+			</li>
+			<li>
+				<a href="index.html#comment-form-load-service:Facebook" id="postas-facebook" title="Facebook">
+					<span></span>
+				</a>
+			</li>
+		</ul>
+	</div>
+
+	<div id="comment-form-guest" class="comment-form-service selected">
+		<div class="comment-form-padder">
+			<div class="comment-form-avatar">
+<a href="https://gravatar.com/site/signup/" target="_blank">				<img src="../../../../../1.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536%3Fs=25&amp;d=identicon&amp;forcedefault=y&amp;r=G" alt="Gravatar" width="25" class="no-grav" />
+</a>			</div>
+
+				<div class="comment-form-fields">
+				<div class="comment-form-field comment-form-email">
+					<label for="email">Email <span class="required">(required)</span> <span class="nopublish">(Address never made public)</span></label>
+					<div class="comment-form-input"><input id="email" name="email" type="email" value="" /></div>
+				</div>
+				<div class="comment-form-field comment-form-author">
+					<label for="author">Name <span class="required">(required)</span></label>
+					<div class="comment-form-input"><input id="author" name="author" type="text" value="" /></div>
+				</div>
+				<div class="comment-form-field comment-form-url">
+					<label for="url">Website</label>
+					<div class="comment-form-input"><input id="url" name="url" type="text" value="" /></div>
+				</div>
+			</div>
+	
+		</div>
+	</div>
+
+	<div id="comment-form-wordpress" class="comment-form-service">
+		<div class="comment-form-padder">
+			<div class="comment-form-avatar">
+				<img src="../../../../../s2.wp.com/wp-content/mu-plugins/highlander-comments/images/wplogo.png%3Fm=1289230950g" alt="WordPress.com Logo" width="25" class="no-grav" />
+			</div>
+
+				<div class="comment-form-fields">
+				<input type="hidden" name="wp_avatar" id="wordpress-avatar" class="comment-meta-wordpress" value="" />
+				<input type="hidden" name="wp_user_id" id="wordpress-user_id" class="comment-meta-wordpress" value="" />
+				<input type="hidden" name="wp_access_token" id="wordpress-access_token" class="comment-meta-wordpress" value="" />
+				<p class="comment-form-posting-as pa-wordpress"><strong></strong> You are commenting using your WordPress.com account. <span class="comment-form-log-out">(&nbsp;<a href="javascript:HighlanderComments.doExternalLogout( 'wordpress' );">Log&nbsp;Out</a>&nbsp;/&nbsp;<a href="index.html#" onclick="javascript:HighlanderComments.switchAccount();return false;">Change</a>&nbsp;)</span></p>
+			</div>
+	
+		</div>
+	</div>
+
+	<div id="comment-form-twitter" class="comment-form-service">
+		<div class="comment-form-padder">
+			<div class="comment-form-avatar">
+				<img src="../../../../../1.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536%3Fs=25&amp;d=identicon&amp;forcedefault=y&amp;r=G" alt="Twitter picture" width="25" class="no-grav" />
+			</div>
+
+				<div class="comment-form-fields">
+				<input type="hidden" name="twitter_avatar" id="twitter-avatar" class="comment-meta-twitter" value="" />
+				<input type="hidden" name="twitter_user_id" id="twitter-user_id" class="comment-meta-twitter" value="" />
+				<input type="hidden" name="twitter_access_token" id="twitter-access_token" class="comment-meta-twitter" value="" />
+				<p class="comment-form-posting-as pa-twitter"><strong></strong> You are commenting using your Twitter account. <span class="comment-form-log-out">(&nbsp;<a href="javascript:HighlanderComments.doExternalLogout( 'twitter' );">Log&nbsp;Out</a>&nbsp;/&nbsp;<a href="index.html#" onclick="javascript:HighlanderComments.switchAccount();return false;">Change</a>&nbsp;)</span></p>
+			</div>
+	
+		</div>
+	</div>
+
+	<div id="comment-form-facebook" class="comment-form-service">
+		<div class="comment-form-padder">
+			<div class="comment-form-avatar">
+				<img src="../../../../../1.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536%3Fs=25&amp;d=identicon&amp;forcedefault=y&amp;r=G" alt="Facebook photo" width="25" class="no-grav" />
+			</div>
+
+				<div class="comment-form-fields">
+				<input type="hidden" name="fb_avatar" id="facebook-avatar" class="comment-meta-facebook" value="" />
+				<input type="hidden" name="fb_user_id" id="facebook-user_id" class="comment-meta-facebook" value="" />
+				<input type="hidden" name="fb_access_token" id="facebook-access_token" class="comment-meta-facebook" value="" />
+				<p class="comment-form-posting-as pa-facebook"><strong></strong> You are commenting using your Facebook account. <span class="comment-form-log-out">(&nbsp;<a href="javascript:HighlanderComments.doExternalLogout( 'facebook' );">Log&nbsp;Out</a>&nbsp;/&nbsp;<a href="index.html#" onclick="javascript:HighlanderComments.switchAccount();return false;">Change</a>&nbsp;)</span></p>
+			</div>
+	
+		</div>
+	</div>
+
+
+	<div id="comment-form-load-service" class="comment-form-service">
+		<div class="comment-form-posting-as-cancel"><a href="javascript:HighlanderComments.cancelExternalWindow();">Cancel</a></div>
+		<p>Connecting to %s</p>
+	</div>
+
+	
+</div>
+
+<script type="text/javascript">
+var highlander_expando_javascript = function(){
+	var input = document.createElement( 'input' ),
+	    comment = jQuery( '#comment' );
+
+	if ( 'placeholder' in input ) {
+		comment.attr( 'placeholder', jQuery( '.comment-textarea label' ).remove().text() );
+	}
+
+	// Expando Mode: start small, then auto-resize on first click + text length
+	jQuery( '#comment-form-identity' ).hide();
+	jQuery( '#comment-form-subscribe' ).hide();
+	jQuery( '#commentform .form-submit' ).hide();
+
+	comment.css( { 'height':'10px' } ).one( 'focus', function() {
+		var timer = setInterval( HighlanderComments.resizeCallback, 10 )
+		jQuery( this ).animate( { 'height': HighlanderComments.initialHeight } ).delay( 100 ).queue( function(n) { clearInterval( timer ); HighlanderComments.resizeCallback(); n(); } );
+		jQuery( '#comment-form-identity' ).slideDown();
+		jQuery( '#comment-form-subscribe' ).slideDown();
+		jQuery( '#commentform .form-submit' ).slideDown();
+	});
+}
+jQuery(document).ready( highlander_expando_javascript );
+</script>
+
+<div id="comment-form-subscribe">
+	<p class="comment-subscription-form"><input type="checkbox" name="subscribe" id="subscribe" value="subscribe" style="width: auto;" tabindex="6"/> <label class="subscribe-label" id="subscribe-label" for="subscribe" style="display: inline;">Notify me of follow-up comments via email.</label></p></div>
+
+												<p class="form-submit">
+							<input name="submit" type="submit" id="comment-submit" value="Post Comment" />
+							<input type='hidden' name='comment_post_ID' value='208' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+						</p>
+						
+<input type="hidden" name="genseq" value="1376910199" />
+<p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="2bc5321217" /></p><script type='text/javascript' src='../../../../../s2.wp.com/wp-content/mu-plugins/akismet-2.5/form.js%3Fm=1308783962g'></script>
+<p style="display: none;"><input type="hidden" id="ak_js" name="ak_js" value="148"/></p>					</form>
+							</div><!-- #respond -->
+			<div style="clear: both"></div>			
+	</div><!-- .comments-wrap -->
+
+</div><!-- #comments-template -->
+				
+			
+		</div><!-- .hfeed -->
+
+		
+	
+		<div class="loop-nav">
+			<div class="previous">&larr; <a href="http://twrightson.wordpress.com/2011/12/18/covert-system-manipulation-tool-simsim/" rel="prev">Covert System Manipulation Tool &#8211;&nbsp;SimSim</a></div>			<div class="next"><a href="http://twrightson.wordpress.com/2012/01/18/insider-rogue-certification-authority-attack/" rel="next">Insider Rogue Certification Authority&nbsp;Attack</a> &rarr;</div>		</div><!-- .loop-nav -->
+
+	
+	</div><!-- #content -->
+
+				<div id="sidebar-primary" class="sidebar">
+
+		<div id="text-3" class="widget widget_text widget-widget_text"><h3 class="widget-title">Feedback Always Welcome</h3>			<div class="textwidget">I've noticed a decent amount of downloads of some of my programs.  If you've used something I've developed and have any comments, questions or features you'd like to see please provide feedback.  Always interested in feature requests as well.
+-Tyler</div>
+		</div><div id="archives-4" class="widget widget_archive widget-widget_archive"><h3 class="widget-title">Archives</h3>		<ul>
+			<li><a href='http://twrightson.wordpress.com/2013/06/' title='June 2013'>June 2013</a>&nbsp;(1)</li>
+	<li><a href='http://twrightson.wordpress.com/2012/08/' title='August 2012'>August 2012</a>&nbsp;(1)</li>
+	<li><a href='http://twrightson.wordpress.com/2012/07/' title='July 2012'>July 2012</a>&nbsp;(1)</li>
+	<li><a href='http://twrightson.wordpress.com/2012/01/' title='January 2012'>January 2012</a>&nbsp;(3)</li>
+	<li><a href='http://twrightson.wordpress.com/2011/12/' title='December 2011'>December 2011</a>&nbsp;(1)</li>
+	<li><a href='http://twrightson.wordpress.com/2011/11/' title='November 2011'>November 2011</a>&nbsp;(1)</li>
+	<li><a href='http://twrightson.wordpress.com/2011/10/' title='October 2011'>October 2011</a>&nbsp;(3)</li>
+	<li><a href='http://twrightson.wordpress.com/2010/11/' title='November 2010'>November 2010</a>&nbsp;(1)</li>
+	<li><a href='http://twrightson.wordpress.com/2010/06/' title='June 2010'>June 2010</a>&nbsp;(1)</li>
+	<li><a href='http://twrightson.wordpress.com/2009/09/' title='September 2009'>September 2009</a>&nbsp;(3)</li>
+	<li><a href='http://twrightson.wordpress.com/2009/08/' title='August 2009'>August 2009</a>&nbsp;(1)</li>
+	<li><a href='http://twrightson.wordpress.com/2009/06/' title='June 2009'>June 2009</a>&nbsp;(1)</li>
+	<li><a href='http://twrightson.wordpress.com/2009/05/' title='May 2009'>May 2009</a>&nbsp;(1)</li>
+	<li><a href='http://twrightson.wordpress.com/2009/04/' title='April 2009'>April 2009</a>&nbsp;(3)</li>
+	<li><a href='http://twrightson.wordpress.com/2009/03/' title='March 2009'>March 2009</a>&nbsp;(1)</li>
+	<li><a href='http://twrightson.wordpress.com/2009/02/' title='February 2009'>February 2009</a>&nbsp;(2)</li>
+	<li><a href='http://twrightson.wordpress.com/2009/01/' title='January 2009'>January 2009</a>&nbsp;(2)</li>
+	<li><a href='http://twrightson.wordpress.com/2008/11/' title='November 2008'>November 2008</a>&nbsp;(2)</li>
+	<li><a href='http://twrightson.wordpress.com/2008/09/' title='September 2008'>September 2008</a>&nbsp;(2)</li>
+		</ul>
+</div><div id="categories-2" class="widget widget_categories widget-widget_categories"><h3 class="widget-title">Categories</h3><select name='cat' id='cat' class='postform' >
+	<option value='-1'>Select Category</option>
+	<option class="level-0" value="3328">Book Reviews&nbsp;&nbsp;(2)</option>
+	<option class="level-0" value="25818">Cryptography&nbsp;&nbsp;(1)</option>
+	<option class="level-0" value="54">General&nbsp;&nbsp;(8)</option>
+	<option class="level-0" value="177400">Penetration Testing&nbsp;&nbsp;(2)</option>
+	<option class="level-1" value="17483">&nbsp;&nbsp;&nbsp;Social Engineering&nbsp;&nbsp;(2)</option>
+	<option class="level-0" value="17976">Programs&nbsp;&nbsp;(16)</option>
+	<option class="level-1" value="19515635">&nbsp;&nbsp;&nbsp;Aimsniff&nbsp;&nbsp;(2)</option>
+	<option class="level-1" value="329646">&nbsp;&nbsp;&nbsp;backdoors&nbsp;&nbsp;(4)</option>
+	<option class="level-1" value="313317">&nbsp;&nbsp;&nbsp;PacMan&nbsp;&nbsp;(2)</option>
+	<option class="level-1" value="59189">&nbsp;&nbsp;&nbsp;Skeletons&nbsp;&nbsp;(1)</option>
+	<option class="level-0" value="4493">Scripts&nbsp;&nbsp;(4)</option>
+</select>
+
+<script type='text/javascript'>
+/* <![CDATA[ */
+	var dropdown = document.getElementById("cat");
+	function onCatChange() {
+		if ( dropdown.options[dropdown.selectedIndex].value > 0 ) {
+			location.href = "http://twrightson.wordpress.com/?cat="+dropdown.options[dropdown.selectedIndex].value;
+		}
+	}
+	dropdown.onchange = onCatChange;
+/* ]]> */
+</script>
+
+</div><div id="twitter-2" class="widget widget_twitter widget-widget_twitter"><h3 class="widget-title"><a href='http://twitter.com/tbwrightson'>Twitter Feed</a></h3><ul class='tweets'>
+			<li>
+				Bought a digital safe on craigslist, no key, no code, no problem. One drop later I have an opened safe, and set a new code. Video soon. 				<a href="http://twitter.com/tbwrightson/statuses/367429757480083456" class="timesince">5&nbsp;days&nbsp;ago</a>
+			</li>
+
+			
+			<li>
+				@<a href='http://twitter.com/Don_Naylor'>Don_Naylor</a> @<a href='http://twitter.com/Visually'>Visually</a> Love it hombre 				<a href="http://twitter.com/tbwrightson/statuses/357556602057916416" class="timesince">1&nbsp;month&nbsp;ago</a>
+			</li>
+
+			
+			<li>
+				Just received confirmation email that I&#039;ll be speaking at Derbycon 3.0. Beyond stoked, BOOM! Can&#039;t wait to see everyone again. <a href='http://twitter.com/search?q=%23derbycon'>#derbycon</a> 				<a href="http://twitter.com/tbwrightson/statuses/354604875646119936" class="timesince">1&nbsp;month&nbsp;ago</a>
+			</li>
+
+			</ul><a href="http://twitter.com/tbwrightson"  class='twitter-follow-button' data-show-count='false' data-link-color='#dd5424' data-text-color='#000000'>Follow @tbwrightson</a></div><div id="blog_subscription-3" class="widget widget_blog_subscription widget-widget_blog_subscription"><h3 class="widget-title"><label for="subscribe-field">Follow Blog via Email</label></h3>
+			<form action="https://subscribe.wordpress.com" method="post" accept-charset="utf-8" id="subscribe-blog">
+									<p>Enter your email address to follow this blog and receive notifications of new posts by email.</p>
+<p>Join 12 other followers</p>
+					<p><input type="text" name="email" style="width: 95%; padding: 1px 2px" value="" id="subscribe-field"/></p>
+				
+				<p>
+					<input type="hidden" name="action" value="subscribe"/>
+					<input type="hidden" name="blog_id" value="4729478"/>
+					<input type="hidden" name="source" value="http://twrightson.wordpress.com/2012/01/02/capturing-windows-7-credentials-at-logon-using-custom-credential-provider/"/>
+					<input type="hidden" name="sub-type" value="widget"/>
+					<input type="hidden" name="redirect_fragment" value="blog_subscription-3" />
+					<input type="hidden" id="_wpnonce" name="_wpnonce" value="017d49f607" />					<input type="submit" value="Follow" />
+				</p>
+			</form>
+			
+</div>	</div><!-- #sidebar-primary .aside -->
+
+		</div><!-- #main -->
+
+
+		<div id="footer">
+			<div id="site-generator">
+				<a href="http://wordpress.com/?ref=footer" rel="generator">Blog at WordPress.com</a>.<br />
+				<a href="http://theme.wordpress.com/themes/origin/" title="Learn more about this theme">The Origin Theme</a>. 			</div><!-- #site-generator -->
+
+		</div><!-- #footer -->
+
+		</div><!-- .wrap -->
+
+	</div><!-- #container -->
+
+	
+<script type="text/javascript">
+var _qevents = _qevents || [], wpcomQuantcastData = {"qacct":"p-18-mFEk4J448M","labels":",language.en,type.wpcom,as"};
+function wpcomQuantcastPixel( labels, options ) {
+	var i, defaults = wpcomQuantcastData, data = { event: 'ajax' };
+
+	labels  = labels  || '';
+	options = options || {};
+
+	if ( typeof labels != 'string' )
+		options = labels;
+
+	for ( i in defaults ) {
+		data[i] = defaults[i];
+	}
+
+	for ( i in options ) {
+		data[i] = options[i];
+	}
+
+	if ( data.labels ) {
+		data.labels += ',' + labels;
+	} else {
+		data.labels = labels;
+	}
+
+	_qevents.push( data );
+};
+(function() {var elem = document.createElement('script');elem.src = (document.location.protocol == "https:" ? "https://secure" : "http://edge") + ".quantserve.com/quant.js";elem.async = true;elem.type = "text/javascript";var scpt = document.getElementsByTagName('script')[0];scpt.parentNode.insertBefore(elem, scpt);  })();
+_qevents.push( wpcomQuantcastData );
+</script>
+<noscript><div style="display: none;"><img src="../../../../../pixel.quantserve.com/pixel/p-18-mFEk4J448M.gif%3Flabels=,language.en,type.wpcom,as" height="1" width="1" alt="" /></div></noscript>
+
+<script type='text/javascript' src='../../../../../0.gravatar.com/js/gprofiles.js%3Fver=201334ac'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var WPGroHo = {"my_hash":""};
+/* ]]> */
+</script>
+<script type='text/javascript' src='../../../../../s0.wp.com/wp-content/mu-plugins/gravatar-hovercards/wpgroho.js%3Fm=1351637563g'></script>
+<script>jQuery(document).ready(function($){ Gravatar.profile_cb = function( h, d ) { WPGroHo.syncProfileData( h, d );	}; Gravatar.my_hash = WPGroHo.my_hash; Gravatar.init( 'body', '#wp-admin-bar-my-account' ); });</script>	<div style="display:none">
+	<div class="grofile-hash-map-c97fea8f3d9d7fe76c10be42548c7484">
+	</div>
+	<div class="grofile-hash-map-04b6aa2c30083bfbaa7f432e2a160072">
+	</div>
+	<div class="grofile-hash-map-613fb7900e580dde2c4609c658645cfc">
+	</div>
+	<div class="grofile-hash-map-11f2d6c521eb39a09cde63fc41c6f676">
+	</div>
+	<div class="grofile-hash-map-d337542b80902992cc68d0c6c84aa2fb">
+	</div>
+	<div class="grofile-hash-map-9c5ea0c54870f8f2010cc31f8b17252d">
+	</div>
+	<div class="grofile-hash-map-10dae8d751bdfb36a271ebccb1b34c14">
+	</div>
+	<div class="grofile-hash-map-24cd6ea839e4542fa6815aa3beb18de0">
+	</div>
+	<div class="grofile-hash-map-3e3bd3d7575624258185c1b656b60f56">
+	</div>
+	<div class="grofile-hash-map-9cf8cbf5537eea94350a84b91379e2cf">
+	</div>
+	<div class="grofile-hash-map-238346376d9643f60c34635fad6f9517">
+	</div>
+	</div>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var HighlanderComments = {"loggingInText":"Logging In\u2026","submittingText":"Posting Comment\u2026","postCommentText":"Post Comment","connectingToText":"Connecting to %s","commentingAsText":"%1$s: You are commenting using your %2$s account.","logoutText":"Log Out","loginText":"Log In","connectURL":"http:\/\/twrightson.wordpress.com\/public.api\/connect\/?action=request","logoutURL":"http:\/\/twrightson.wordpress.com\/wp-login.php?action=logout&_wpnonce=1175c86307","homeURL":"http:\/\/twrightson.wordpress.com\/","postID":"208","gravDefault":"identicon","enterACommentError":"Please enter a comment","enterEmailError":"Please enter your email address here","invalidEmailError":"Invalid email address","enterAuthorError":"Please enter your name here","gravatarFromEmail":"This picture will show whenever you leave a comment. Click to customize it.","logInToExternalAccount":"Log in to use details from one of these accounts.","change":"Change","changeAccount":"Change Account","comment_registration":"","userIsLoggedIn":"","isJetpack":"0"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='../../../../../s2.wp.com/_static/index.html%3F%3F%252Fwp-content%252Fjs%252Fjquery%252Fjquery.autoresize.js,%252Fwp-content%252Fmu-plugins%252Fhighlander-comments%252Fscript.js%3Fm=1369800175j'></script>
+
+	<div id="bit" class="loggedout-follow-normal">
+		<a class="bsub" href="javascript:void(0)"><span id='bsub-text'>Follow</span></a>
+		<div id="bitsubscribe">
+
+					<h3><label for="loggedout-follow-field">Follow &ldquo;Tyler Wrightson&#039;s Security Blog&rdquo;</label></h3>
+
+			<form action="https://subscribe.wordpress.com" method="post" accept-charset="utf-8" id="loggedout-follow">
+			<p>Get every new post delivered to your Inbox.</p>
+
+			<p id="loggedout-follow-error" style="display: none;"></p>
+
+			
+			<p><input type="email" name="email" style="width: 95%; padding: 1px 2px" value="Enter your email address" onfocus='this.value=(this.value=="Enter your email address") ? "" : this.value;' onblur='this.value=(this.value=="") ? "Enter email address" : this.value;'  id="loggedout-follow-field"/></p>
+
+			<input type="hidden" name="action" value="subscribe"/>
+			<input type="hidden" name="blog_id" value="4729478"/>
+			<input type="hidden" name="source" value="http://twrightson.wordpress.com/2012/01/02/capturing-windows-7-credentials-at-logon-using-custom-credential-provider/"/>
+			<input type="hidden" name="sub-type" value="loggedout-follow"/>
+
+			<input type="hidden" id="_wpnonce" name="_wpnonce" value="017d49f607" /><input type="hidden" name="_wp_http_referer" value="/2012/01/02/capturing-windows-7-credentials-at-logon-using-custom-credential-provider/" />
+			<p id='bsub-subscribe-button'><input type="submit" value="Sign me up" /></p>
+			</form>
+					<div id='bsub-credit'><a href="http://wordpress.com/signup/?ref=lof">Powered by WordPress.com</a></div>
+		</div><!-- #bitsubscribe -->
+	</div><!-- #bit -->
+		<iframe src='../../../../../widgets.wp.com/likes/master.html%3Fver=20130620a.html#ver=20130620a&amp;mp6=1' scrolling='no' id='likes-master' name='likes-master' style='display:none;'></iframe>
+		<div id='likes-other-gravatars'><div class="likes-text"><span>%d</span> bloggers like this:</div><ul class="wpl-avatars sd-like-gravatars"></ul></div>
+		<script type="text/javascript">
+		//<![CDATA[
+			var jetpackLikesWidgetQueue = [];
+			var jetpackLikesMasterReady = false;
+
+			function JetpackLikespostMessage( message, target ) {
+				if ( "string" === typeof message ){
+					try{
+						message = JSON.parse( message );
+					}
+					catch(e) {
+						return;
+					}
+				}
+
+				pm( {
+					target: target,
+					type: 'likesMessage',
+					data: message,
+					origin: '*'
+				} );
+			}
+
+			function JetpackLikesMessageListener( event ) {
+				if ( "undefined" == typeof event.event )
+					return;
+
+				if ( 'masterReady' == event.event ) {
+					jQuery( document ).ready( function() {
+						jetpackLikesMasterReady = true;
+
+						var stylesData = {
+								event: 'injectStyles'
+						};
+
+						if ( jQuery( 'iframe.admin-bar-likes-widget' ).length > 0 ) {
+							JetpackLikespostMessage( { event: 'adminBarEnabled' }, window.frames[ 'likes-master' ] );
+
+							stylesData.adminBarStyles = {
+								background: jQuery( '#wpadminbar .quicklinks li#wp-admin-bar-wpl-like > a' ).css( 'background' )
+							};
+						}
+
+						if ( !window.addEventListener )
+							jQuery( '#wp-admin-bar-admin-bar-likes-widget' ).hide();
+
+						stylesData.textStyles = {
+							color: jQuery( '.sd-text-color').css( 'color' ),
+							fontFamily: jQuery( '.sd-text-color' ).css( 'font-family' ),
+							fontSize: jQuery( '.sd-text-color' ).css( 'font-size' ),
+							direction: jQuery( '.sd-text-color' ).css( 'direction' ),
+							fontWeight: jQuery( '.sd-text-color' ).css( 'font-weight' ),
+							fontStyle: jQuery( '.sd-text-color' ).css( 'font-style' ),
+							textDecoration: jQuery( '.sd-text-color' ).css('text-decoration')
+						};
+
+						stylesData.linkStyles = {
+							color: jQuery( '.sd-link-color' ).css('color'),
+							fontFamily: jQuery( '.sd-link-color' ).css('font-family'),
+							fontSize: jQuery( '.sd-link-color' ).css('font-size'),
+							textDecoration: jQuery( '.sd-link-color' ).css('text-decoration'),
+							fontWeight: jQuery( '.sd-link-color' ).css( 'font-weight' ),
+							fontStyle: jQuery( '.sd-link-color' ).css( 'font-style' )
+						};
+
+						JetpackLikespostMessage( stylesData, window.frames[ 'likes-master' ] );
+
+						var requests = [];
+						jQuery( '.jetpack-likes-widget-wrapper' ).each( function( i ) {
+							var regex = /like-(post|comment)-wrapper-(\d+)-(\d+)-(\w+)/;
+							var match = regex.exec( this.id );
+							if ( ! match || match.length != 5 )
+								return;
+
+							var info = {
+								blog_id: match[2],
+								width:   this.width
+							};
+
+							if ( 'post' == match[1] ) {
+								info.post_id = match[3];
+							} else if ( 'comment' == match[1] ) {
+								info.comment_id = match[3];
+							}
+
+							info.obj_id = match[4];
+
+							requests.push( info );
+						});
+
+						JetpackLikespostMessage( { event: 'initialBatch', requests: requests }, window.frames['likes-master'] );
+
+						jQuery( document ).on( 'inview', 'div.jetpack-likes-widget-unloaded', function() {
+							jetpackLikesWidgetQueue.push( this.id );
+						});
+					});
+				}
+
+				if ( 'showLikeWidget' == event.event ) {
+					setTimeout( JetpackLikesWidgetQueueHandler, 10 );
+					jQuery( '#' + event.id + ' .post-likes-widget-placeholder'  ).fadeOut( 'fast', function() {
+						jQuery( '#' + event.id + ' .post-likes-widget' ).fadeIn( 'fast', function() {
+							JetpackLikespostMessage( { event: 'likeWidgetDisplayed', blog_id: event.blog_id, post_id: event.post_id, obj_id: event.obj_id }, window.frames['likes-master'] );
+						});
+					});
+				}
+
+				if ( 'showOtherGravatars' == event.event ) {
+					var $container = jQuery( '#likes-other-gravatars' );
+					var $list = $container.find( 'ul' );
+
+					$container.hide();
+					$list.html( '' );
+
+					$container.find( '.likes-text span' ).text( event.total );
+
+					jQuery.each( event.likers, function( i, liker ) {
+						$list.append( '<li class="' + liker.css_class + '"><a href="http://twrightson.wordpress.com/2012/01/02/capturing-windows-7-credentials-at-logon-using-custom-credential-provider/'&#32;+&#32;liker.profile_URL&#32;+&#32;'" class="wpl-liker" rel="nofollow" target="_parent"><img src="http://twrightson.wordpress.com/2012/01/02/capturing-windows-7-credentials-at-logon-using-custom-credential-provider/'&#32;+&#32;liker.avatar_URL&#32;+&#32;'" alt="' + liker.name + '" width="30" height="30" style="padding-right: 3px;" /></a></li>');
+					} );
+
+					var offset = jQuery( "[name='" + event.parent + "']" ).offset();
+
+					$container.css( 'left', offset.left + event.position.left - 10 + 'px' );
+					$container.css( 'top', offset.top + event.position.top - 33 + 'px' );
+
+					var rowLength = Math.floor( event.width / 37 );
+					var height = ( Math.ceil( event.likers.length / rowLength ) * 37 ) + 13;
+					if ( height > 204 ) {
+						height = 204;
+					}
+
+					$container.css( 'height', height + 'px' );
+					$container.css( 'width', rowLength * 37 - 7 + 'px' );
+
+					$list.css( 'width', rowLength * 37 + 'px' );
+
+					$container.fadeIn( 'slow' );
+
+					var scrollbarWidth = $list[0].offsetWidth - $list[0].clientWidth;
+					if ( scrollbarWidth > 0 ) {
+						$container.width( $container.width() + scrollbarWidth );
+						$list.width( $list.width() + scrollbarWidth );
+					}
+				}
+			}
+
+			pm.bind( 'likesMessage', function(e) { JetpackLikesMessageListener(e); } );
+
+			jQuery( document ).click( function( e ) {
+				var $container = jQuery( '#likes-other-gravatars' );
+
+				if ( $container.has( e.target ).length === 0 ) {
+					$container.fadeOut( 'slow' );
+				}
+			});
+
+			function JetpackLikesWidgetQueueHandler() {
+				var wrapperID;
+				if ( ! jetpackLikesMasterReady ) {
+					setTimeout( JetpackLikesWidgetQueueHandler, 500 );
+					return;
+				}
+
+				if ( jetpackLikesWidgetQueue.length > 0 ) {
+					// We may have a widget that needs creating now
+					var found = false;
+					while( jetpackLikesWidgetQueue.length > 0 ) {
+						// Grab the first member of the queue that isn't already loading.
+						wrapperID = jetpackLikesWidgetQueue.splice( 0, 1 )[0];
+						if ( jQuery( '#' + wrapperID ).hasClass( 'jetpack-likes-widget-unloaded' ) ) {
+							found = true;
+							break;
+						}
+					}
+					if ( ! found ) {
+						setTimeout( JetpackLikesWidgetQueueHandler, 500 );
+						return;
+					}
+				} else if ( jQuery( 'div.jetpack-likes-widget-unloaded' ).length > 0 ) {
+					// Get the next unloaded widget
+					wrapperID = jQuery( 'div.jetpack-likes-widget-unloaded' ).first()[0].id;
+					if ( ! wrapperID ) {
+						// Everything is currently loaded
+						setTimeout( JetpackLikesWidgetQueueHandler, 500 );
+						return;
+					}
+				}
+
+				var $wrapper = jQuery( '#' + wrapperID );
+				$wrapper.find( 'iframe' ).remove();
+
+				if ( $wrapper.hasClass( 'slim-likes-widget' ) ) {
+					$wrapper.find( '.post-likes-widget-placeholder' ).after( "<iframe class='post-likes-widget jetpack-likes-widget' name='" + $wrapper.data( 'name' ) + "' height='22px' width='68px' frameBorder='0' scrolling='no' src='http://twrightson.wordpress.com/2012/01/02/capturing-windows-7-credentials-at-logon-using-custom-credential-provider/&quot;&#32;+&#32;$wrapper.data('src' ) + "'></iframe>" );
+				} else {
+					$wrapper.find( '.post-likes-widget-placeholder' ).after( "<iframe class='post-likes-widget jetpack-likes-widget' name='" + $wrapper.data( 'name' ) + "' height='55px' width='100%' frameBorder='0' src='http://twrightson.wordpress.com/2012/01/02/capturing-windows-7-credentials-at-logon-using-custom-credential-provider/&quot;&#32;+&#32;$wrapper.data('src' ) + "'></iframe>" );
+				}
+
+				$wrapper.removeClass( 'jetpack-likes-widget-unloaded' ).addClass( 'jetpack-likes-widget-loading' );
+
+				$wrapper.find( 'iframe' ).load( function( e ) {
+					var $iframe = jQuery( e.target );
+					$wrapper.removeClass( 'jetpack-likes-widget-loading' ).addClass( 'jetpack-likes-widget-loaded' );
+
+					JetpackLikespostMessage( { event: 'loadLikeWidget', name: $iframe.attr( 'name' ), width: $iframe.width() }, window.frames[ 'likes-master' ] );
+
+					if ( $wrapper.hasClass( 'slim-likes-widget' ) ) {
+						$wrapper.find( 'iframe' ).Jetpack( 'resizeable' );
+					}
+				});
+				setTimeout( JetpackLikesWidgetQueueHandler, 250 );
+			}
+			JetpackLikesWidgetQueueHandler();
+		//]]>
+		</script>
+<script type='text/javascript' src='../../../../../platform.twitter.com/widgets.js%3Fver=20111117'></script>
+<script type='text/javascript' src='../../../../../s1.wp.com/wp-content/js/devicepx.js%3Fm=1373391538g'></script>
+<script type="text/javascript">
+// <![CDATA[
+(function() {
+try{
+  if ( window.external &&'msIsSiteMode' in window.external) {
+    if (window.external.msIsSiteMode()) {
+      var jl = document.createElement('script');
+      jl.type='text/javascript';
+      jl.async=true;
+      jl.src='/wp-content/plugins/ie-sitemode/custom-jumplist.php';
+      var s = document.getElementsByTagName('script')[0];
+      s.parentNode.insertBefore(jl, s);
+    }
+  }
+}catch(e){}
+})();
+// ]]>
+</script><script src="../../../../../s.stats.wordpress.com/w.js%3F21" type="text/javascript"></script>
+<script type="text/javascript">
+st_go({'blog':'4729478','v':'wpcom','tz':'-4','user_id':'0','post':'208','subd':'twrightson'});
+ex_go({'crypt':'UE5XaGUuOTlwaD85flAmcm1mcmZsaDhkV11YdWtpP0NsWnVkPS9sL0ViLndld3BNMGlIP3kvLj1XdHNxSTlNK3BrSElRMSxqXUZfKzdnYi1teHxNYlR8anVnbzBzR2Jqdm5uS2JzW1ptXSxRY3hZM0NZJkYrM2RMaG1UW2puWVhtMkkyb01BdzQ3WHk9Zkw/LV1NLC9lVkYzfltQajBZSGxOYVJBVWJxOG5FRXhGU3NmV0lIX1pFP2hfMFQ/c3VVREM0aDczfkdHQW1aSz1iWGZDdTk1WFtkSi00b2IvSGUwVX5rWlJtaXpbNCs0VzhZLzB2VF9PNGxaSm04dTRvZlZoQ25GMm9pQTVOU2E5bjUwVnp+bXdXS1pHeGpVUnVDRllBNThSUzQ5TFU3'});
+addLoadEvent(function(){linktracker_init('4729478',208);});
+	</script>
+<noscript><img src="../../../../../stats.wordpress.com/b.gif%3Fv=noscript" style="height:0px;width:0px;overflow:hidden" alt="" /></noscript>
+<script>
+if ( 'object' === typeof wpcom_mobile_user_agent_info ) {
+
+	wpcom_mobile_user_agent_info.init();
+	var mobileStatsQueryString = "";
+	
+	if( false !== wpcom_mobile_user_agent_info.matchedPlatformName )
+		mobileStatsQueryString += "&x_" + 'mobile_platforms' + '=' + wpcom_mobile_user_agent_info.matchedPlatformName;
+	
+	if( false !== wpcom_mobile_user_agent_info.matchedUserAgentName )
+		mobileStatsQueryString += "&x_" + 'mobile_devices' + '=' + wpcom_mobile_user_agent_info.matchedUserAgentName;
+	
+	if( wpcom_mobile_user_agent_info.isIPad() )
+		mobileStatsQueryString += "&x_" + 'ipad_views' + '=' + 'views';
+
+	if( "" != mobileStatsQueryString ) {
+		new Image().src = document.location.protocol + '//stats.wordpress.com/g.gif?v=wpcom-no-pv' + mobileStatsQueryString + '&baba=' + Math.random();
+	}
+	
+}
+</script>
+</body>
+</html>

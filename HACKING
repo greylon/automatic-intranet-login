@@ -1,0 +1,49 @@
+C++ is a language with alot of features. Actually way to many which allows too many funny and crazy
+code. Also there is a lot of things in there which just slows down C++ in run and compile time so
+that is not funny anymore. In that spirit and to keep things simple the following concepts of C++
+are plainly not allowed. (Feature bloat)
+
+DON'Ts
+======
+
+Language concepts
+
+- Multiple Inheritance
+- Exceptions
+    Follow the Linux Kernels example and use goto's for this problem - and only for this problem!
+- Advanced Template concepts
+- Everything new from C++0x
+
+Language specific functions
+
+- cstream
+- Simple C++ C redefinitions
+
+A good read is this:
+  http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml .
+
+Practices
+
+- do not roll your own implementations of common functions found in STL/Boost except if it really
+  speeds things up and you really made sure you have testing code coverage of at least level c2!
+
+If you choose to need these things, please write a seperate stand alone module of your software
+which can be included as an external library or by other similar means.
+
+Enjoy this gem http://yosefk.com/c++fqa/index.html and be careful about your coding - do test!
+
+DO's
+====
+
+Practices
+
+  - Run your code through Valgrind's memcheck and other tools to make sure it works properly. Update
+  .supp files accordingly.
+  - Run CppCheck (a similar lint tool as splint) over your code
+  - Document your code using Doxygen comments
+  - Follow the coding style which is already there
+  - Run http://google-styleguide.googlecode.com/svn/trunk/cpplint/ 
+  - Follow Google's C++ Coding Guidelines (they make sense)
+  - for base/ read this https://git.wiki.kernel.org/index.php/GitSubmoduleTutorial
+  - Make sure you review https://www.securecoding.cert.org
+

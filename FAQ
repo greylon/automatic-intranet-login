@@ -1,0 +1,22 @@
+Q: Some information on AutoTools?
+A: Here a free book online. http://www.freesoftwaremagazine.com/books/autotools_a_guide_to_autoconf_automake_libtool
+
+Q: Style guide?
+A: Follow this http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml
+
+Q: Why are you putting variable names in prototypes in /* comment */ blocks?
+A: This is recommended by CERT's secure coding guideline API08-C.
+   "Naming the parameters in a prototype declaration should never be necessary, and is often unwise,
+   because these names can be affected by macro definitions. Although the scope of an identifier in
+   a function prototype begins at its declaration and ends at the end of that function's declarator,
+   this scope is ignored by the preprocessor. Consequently, an identifier in a prototype having the
+   same name as that of an existing macro is treated as an invocation of that macro.
+
+   Safeguarding parameter names is particularly critical in standard and system headers where the
+   user expects to be able to include the header and have only the function names visible."
+https://www.securecoding.cert.org/confluence/display/seccode/API08-C.+Protect+header+prototypes+from+misinterpretation
+
+Q: Substitute getters and setters with complex type?
+A: http://stackoverflow.com/questions/760777/c-getters-setters-coding-style
+
+
