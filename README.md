@@ -1,5 +1,5 @@
 # Automatic Intranet Login (AIL)
-Version 0.1.0
+Version 0.1.0-1-g120b348
 
 
 ## WHAT IS THE AIL PROJECT ?
