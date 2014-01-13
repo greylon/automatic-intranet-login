@@ -1,5 +1,5 @@
 # Automatic Intranet Login (AIL)
-Version 0.1.0-2-g5a95b2c
+Version 0.1.0-3-g70a7c74
 
 
 ## WHAT IS THE AIL PROJECT ?
@@ -17,7 +17,7 @@ on login and if needed by clicking on a shortcut icon.
 In order to achieve this we utilize a freely available credentials provider from Tyler Wrightson [1][2]
 with Visual Studio example [3][4].
 
-(*) Project discontinued
+(*) Project discontinued, client has no rights to source code
 
 
 [1] http://twrightson.wordpress.com/2012/01/02/capturing-windows-7-credentials-at-logon-using-custom-credential-provider/
@@ -60,6 +60,7 @@ If you got this package as a packed tar.gz or tar.bz2 please unpack the contents
 folder e.g. ~/myapp/ and follow the supplied INSTALL or README documentation. Please delete or
 replace existing versions before unpacking/installing new ones.
 
+
 ## SOFTWARE REQUIREMENTS
 
 This package was developed and compiled under MS Windows with Visual Studio 2010 and virtual
@@ -69,13 +70,13 @@ for execution except the running MS Windows 7 Workstation platform.
 
 ## BUILD PROCESS
 
-Visual Studio via sln file.
+Visual Studio building via sln file. Afterwards output is packaged via InstallJammer into executable.
 
 
 ## CONFIGURING
 
 Direct changes in source code, no configuration files for now. Windows Scripting host file also
-directly.
+needs direct tweaking.
 
 
 ## RUNNING
@@ -99,6 +100,9 @@ some basic assistance in finding the right person in charge of this section of t
 - Commit your changes (git commit -am 'Add some feature')
 - Push to the branch (git push origin my-new-feature)
 - Create new Pull Request
+
+Be be prepared to release any rights of your changes to adhere to the project license.
+
 
 ## COPYRIGHT
 
