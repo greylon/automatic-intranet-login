@@ -104,6 +104,21 @@ some basic assistance in finding the right person in charge of this section of t
 Be be prepared to release any rights of your changes to adhere to the project license.
 
 
+## DEVELOPMENT
+
+Version bumps follow semver [5].
+
+[5] http://semver.org/
+
+Readme generation is done by:
+
+```
+~# rvm --create use 2.1.0@ail_project
+~# bundle
+~# rake readme
+
+```
+
 ## COPYRIGHT
 
 Please refer to the COPYRIGHT file in the various folders for explicit copyright notice.  Unless

@@ -1,5 +1,5 @@
 # Automatic Intranet Login (AIL)
-Version 0.1.0-3-g70a7c74
+Version 0.1.0-6-g9c6a249
 
 
 ## WHAT IS THE AIL PROJECT ?
@@ -103,6 +103,21 @@ some basic assistance in finding the right person in charge of this section of t
 
 Be be prepared to release any rights of your changes to adhere to the project license.
 
+
+## DEVELOPMENT
+
+Version bumps follow semver [5].
+
+[5] http://semver.org/
+
+Readme generation is done by:
+
+```
+~# rvm --create use 2.1.0@ail_project
+~# bundle
+~# rake readme
+
+```
 
 ## COPYRIGHT
 
