@@ -1,10 +1,10 @@
 # Automatic Intranet Login (AIL)
-Version 0.1.0-1-g120b348
+Version 0.1.0-2-g5a95b2c
 
 
 ## WHAT IS THE AIL PROJECT ?
 
-One of our past clients wanted to allow users of Workstations to login automatically once they
+One of our past clients (*) wanted to allow users of Workstations to login automatically once they
 logged into the Windows 7 workstation. The Windows 7 workstation passwords and the website passwords
 are idential and managed via a central LDAP or Active Directory solution. This software caotures
 given credentials via a custom windows credentials provider and uses this to automatically log into
@@ -16,6 +16,8 @@ on login and if needed by clicking on a shortcut icon.
 
 In order to achieve this we utilize a freely available credentials provider from Tyler Wrightson [1][2]
 with Visual Studio example [3][4].
+
+(*) Project discontinued
 
 
 [1] http://twrightson.wordpress.com/2012/01/02/capturing-windows-7-credentials-at-logon-using-custom-credential-provider/
